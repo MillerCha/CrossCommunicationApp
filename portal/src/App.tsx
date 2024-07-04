@@ -1,68 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useRef } from 'react'
 import './App.css'
+import { openIframeSecondSiteWithDataSecurely, openSecondSiteWithDataSecurely } from './Services/OpenSiteService';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [show, setShow] = useState(false);
+  const iRef = useRef<HTMLIFrameElement | null>(null);
 
-  function openForms(): void {
-    setShow(true);
-    sendMessageToChild();
+
+
+  const openFormsNewWindows = () => {
+    openSecondSiteWithDataSecurely('1', 'http://localhost:5174', '');
   }
 
-    const sendMessageToChild = () => {
-      
-      const childIframe = document.getElementById('childIframe') as HTMLIFrameElement;
-
-      // Send a message to the child iframe window with target origin 'http://localhost:5173'
-      // if target origion = '*' -> can send message to any origion
-      childIframe.contentWindow?.postMessage('Hello from ParentProject!', 'http://localhost:5173');
-    };
+  const openFormsIframe = () => {
+    openIframeSecondSiteWithDataSecurely('1',
+      'http://localhost:5174',
+      '',
+      iRef.current);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <h1>פורטל</h1>
+ 
+
       <div className="card">
 
-        <button onClick={() => openForms()}>
+        <button onClick={() => openFormsNewWindows()}>
           כניסה למערכת טפסים
+          שימוש בסרביס
+          חלון חדש
         </button>
 
-        <button onClick={() => sendMessageToChild()}>
-          שליחת הודעה לטפסים
+
+        <button onClick={() => openFormsIframe()}>
+          כניסה למערכת טפסים
+          שימוש בסרביס
+          iframe
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
 
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <iframe ref={iRef}
+        //src="http://localhost:5174"
+        title="forms" ></iframe>
 
-      {
-        show && <iframe id="childIframe" 
-          src="http://localhost:5173"
-          title="forms" ></iframe>
-      }
 
 
     </>
